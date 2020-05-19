@@ -1,47 +1,67 @@
+//Bresenham Circle Drawing Algorithm
+
 # include<stdio.h>
 # include<graphics.h>
 # include<math.h>
 
 void main()
-{
-int r,x,y,p,xc=320,yc=240;
+    {
+    int r, x, y, p, xc, yc;
 
-printf("Enter the radius ");
-scanf("%d",&r);
+    printf("Bresenham circle drawing algorithm\n");
+    printf("Enter Center for circle\nx : ");
+    scanf("%d", &xc);
+    printf("y : ");
+    scanf("%d", &yc);
+  
 
-int gd=DETECT, gm=VGAMAX;
-initgraph(&gd, &gm, 0);
+    printf("Enter the radius ");
+    scanf("%d", &r);
 
-x=0;
-y=r;
-putpixel(xc+x,yc-y,1);
+    int gd = DETECT, gm = VGAMAX;
+    initgraph(&gd, &gm, 0);
 
-p=3-(2*r);
+    for(int i = 0; i < 480; i++)
+		{
+			putpixel(320, i, WHITE);
+		}
+	for(int i = 0; i < 640; i++)
+		{
+			putpixel(i, 240, WHITE);
+		}
 
-for(x=0;x<=y;x++)
-{
-if (p<0)
-{
-y=y;
-p=(p+(4*x)+6);
-}
-else
-{
-y=y-1;
+    putpixel(320 + xc, 240 - yc, RED);
 
-p=p+((4*(x-y)+10));
-}
+    x = 0;
+    y = r;
+    putpixel( 320 + xc + x, 240 - yc - y, 1);
 
-putpixel(xc+x,yc-y,1);
-putpixel(xc-x,yc-y,2);
-putpixel(xc+x,yc+y,3);
-putpixel(xc-x,yc+y,4);
-putpixel(xc+y,yc-x,5);
-putpixel(xc-y,yc-x,6);
-putpixel(xc+y,yc+x,7);
-putpixel(xc-y,yc+x,8);
+    p = 3 - (2 * r);
 
-}
-getchar();
-closegraph();
+    for(x = 0; x <= y; x++)
+        {
+        if (p < 0)
+            {
+            y = y;
+            p = (p + (4 * x) + 6);
+            }
+        else
+            {
+            y = y - 1;
+            p = p + (( 4 * (x - y) + 10));
+            }
+
+    putpixel(320 + xc + x, 240 - yc - y, 1);
+    putpixel(320 + xc - x, 240 - yc - y, 2);
+    putpixel(320 + xc + x, 240 - yc + y, 3);
+    putpixel(320 + xc - x, 240 - yc + y, 4);
+    putpixel(320 + xc + y, 240 - yc - x, 5);
+    putpixel(320 + xc - y, 240 - yc - x, 6);
+    putpixel(320 + xc + y, 240 - yc + x, 7);
+    putpixel(320 + xc - y, 240 - yc + x, 8);
+    delay(10);
+
+        }
+    getchar();
+    closegraph();
 }
