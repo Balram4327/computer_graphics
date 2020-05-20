@@ -2,7 +2,6 @@
 #include <graphics.h>
 
 float check_int(int, int, int, int, int, int, int, int, int);
-
 void wclip(int clip_win[][2], int n, int poly[][2], int m)
 {
     int count = 0;
@@ -184,7 +183,7 @@ void main()
 {
     int n = 4;
     //clipping window
-    int clip_win[][2] = {{250, 50}, {250, 450}, {500, 450}, {500, 50}};
+    int clip_win[][2] = {{250, 50}, {250, 250}, {500, 450}, {500, 50}};
 
     int m = 6;
     //polygon
