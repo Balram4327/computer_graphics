@@ -8,13 +8,16 @@ void rotate();
 void reflect();
 void shear();
 void translate_poly(int[], int[], int, int, int);
+void scale_poly(int[], int[], int, int, int);
+void shear_poly(int[], int[], int, float, float);
 void draw_poly(int[], int[], int);
 float mat_mul(int[], int[], int[], int, int, int);
 
 void main()
 {
     //translate();
-    scale();
+    //scale();
+    shear();
     closegraph;
 }
 
@@ -68,6 +71,31 @@ void scale_poly(int pointsx[], int pointsy[], int v, int sx, int sy)
     }
 
     draw_poly(pointsx, pointsy, v);
+}
+
+void shear_poly(int pointsx[], int pointsy[], int v, float shx, float shy)
+{
+    int mat1[3] = {1, shy, 0};
+    int mat2[3] = {shx,1 , 0};
+    int mat3[3] = {0, 0, 1};
+    int temp[2];
+    temp[0] = pointsx[0];
+    temp[1] = pointsy[0];
+
+    for (int i = 0; i < v; i++)
+    {
+        pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
+        pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
+    }
+
+    for (int i = 0; i < v; i++)
+    {
+        pointsx[i] = pointsx[i] - pointsx[0] + temp[0];
+        pointsy[i] = pointsy[i] - pointsy[0] + temp[1];
+    }
+
+    draw_poly(pointsx, pointsy, v);
+
 }
 
 void translate()
@@ -168,5 +196,29 @@ void reflect()
 
 void shear()
 {
-    printf("Dummy!");
+  printf("Let's shear? \n");
+
+    int v;
+    float shx, shy;
+    printf("\n Polygon, right?");
+    printf("\n Enter the number of vertices (it can be two for a line): \n");
+    scanf("%d", &v);
+
+    int pointsx[v], pointsy[v];
+    printf("\n Enter the points: \n");
+    for (int i = 0; i < v; i++)
+    {
+        scanf("%d", &pointsx[i]);
+        scanf("%d", &pointsy[i]);
+    }
+
+    printf("\n Tell me shx and shy: \n");
+    scanf("%f %f", &shx, &shy);
+
+    int gd = DETECT, gm = VGAMAX;
+    initgraph(&gd, &gm, 0);
+
+    draw_poly(pointsx, pointsy, v);
+    setcolor(GREEN);
+    shear_poly(pointsx, pointsy, v, shx, shy);
 }
