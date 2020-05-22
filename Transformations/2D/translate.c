@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <graphics.h>
+#include<math.h>
 
 //Prototypes
 void translate();
@@ -10,18 +11,34 @@ void shear();
 void translate_poly(int[], int[], int, int, int);
 void scale_poly(int[], int[], int, int, int);
 void shear_poly(int[], int[], int, float, float);
+void reflect_poly(int[], int[], int, int);
+void rotate_poly(int[], int[], int, float, int);
 void draw_poly(int[], int[], int);
 float mat_mul(int[], int[], int[], int, int, int);
+float mat_mul_1(float[], float[], float[], int, int, int);
 
 void main()
 {
     //translate();
     //scale();
-    shear();
+    //shear();
+    //reflect();
+    rotate();
     closegraph;
 }
 
 float mat_mul(int mat1[], int mat2[], int mat3[], int x, int y, int num)
+{
+    float value;
+    if (num == 0)
+        value = mat1[0] * x + mat2[0] * y + mat3[0] * 1;
+    else
+        value = mat1[1] * x + mat2[1] * y + mat3[1] * 1;
+
+    return value;
+}
+
+float mat_mul_1(float mat1[], float mat2[], float mat3[], int x, int y, int num)
 {
     float value;
     if (num == 0)
@@ -76,7 +93,7 @@ void scale_poly(int pointsx[], int pointsy[], int v, int sx, int sy)
 void shear_poly(int pointsx[], int pointsy[], int v, float shx, float shy)
 {
     int mat1[3] = {1, shy, 0};
-    int mat2[3] = {shx,1 , 0};
+    int mat2[3] = {shx, 1, 0};
     int mat3[3] = {0, 0, 1};
     int temp[2];
     temp[0] = pointsx[0];
@@ -95,7 +112,77 @@ void shear_poly(int pointsx[], int pointsy[], int v, float shx, float shy)
     }
 
     draw_poly(pointsx, pointsy, v);
+}
 
+void reflect_poly(int pointsx[], int pointsy[], int v, int num)
+{
+    int mat1[3] = {0,0,0};
+    int mat2[3] = {0,0,0};
+    int mat3[3] = {0,0,0};
+    if(num == 1)
+    {
+    mat1[0] = 1;
+    mat2[1] =  -1;
+    mat3[2] = 1;
+    }
+    else if(num == 2)
+    {
+    mat1[0] = -1;
+    mat2[1] = 1;
+    mat3[2] = 1;
+    }
+    else
+    {
+    mat1[1] = 1;
+    mat2[0] = 1;
+    mat3[2] = 1;
+    }
+
+     for (int i = 0; i < v; i++)
+    {
+        pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
+        pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
+    }
+
+    for (int i = 0; i < v; i++)
+    {
+        pointsx[i] = pointsx[i] + 320 ;
+        pointsy[i] = pointsy[i] + 240;
+    }
+
+    draw_poly(pointsx, pointsy, v);
+}
+
+void rotate_poly(int pointsx[], int pointsy[], int v, float theta, int num)
+{
+    float mat1[3] = {0,0,0};
+    float mat2[3] = {0,0,0};
+    float mat3[3] = {0,0,1};
+    if(num == 1)
+    {
+        mat1[0] = cos(theta);
+        mat1[1] = -1 * sin(theta);
+
+        mat2[0] = sin(theta);
+        mat2[1] = cos(theta);
+    }
+
+    else
+    {
+        mat1[0] = cos(theta);
+        mat1[1] = sin(theta);
+
+        mat2[0] = -1 * sin(theta);
+        mat2[1] = cos(theta);
+    }
+
+    for (int i = 0; i < v; i++)
+    {
+        pointsx[i] = mat_mul_1(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
+        pointsy[i] = mat_mul_1(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
+    }
+
+    draw_poly(pointsx, pointsy, v);  
 }
 
 void translate()
@@ -186,17 +273,79 @@ void scale()
 
 void rotate()
 {
-    printf("Dummy!");
+    printf("Let's Rotate? \n");
+
+    int v, num;
+    float theta;
+    printf("\n Polygon, right?");
+    printf("\n Enter the number of vertices (it can be two for a line): \n");
+    scanf("%d", &v);
+
+    int pointsx[v], pointsy[v];
+    printf("\n Enter the points: \n");
+    for (int i = 0; i < v; i++)
+    {
+        scanf("%d", &pointsx[i]);
+        scanf("%d", &pointsy[i]);
+    }
+
+    printf("\n Enter theta: ");
+    scanf("%f", &theta);
+
+    printf("\n Clockwise(1) or anticlockwise(2)? ");
+    scanf("%d", &num);
+
+
+    int gd = DETECT, gm = VGAMAX;
+    initgraph(&gd, &gm, 0);
+
+    draw_poly(pointsx, pointsy, v);
+    setcolor(GREEN);
+    rotate_poly(pointsx, pointsy, v, theta, num);
 }
 
 void reflect()
 {
-    printf("Dummy!");
+ printf("Reflection \n");
+
+    int v, num;
+    printf("\n Polygon, right?");
+    printf("\n Enter the number of vertices (it can be two for a line): \n");
+    scanf("%d", &v);
+
+    int pointsx[v], pointsy[v];
+    printf("\n Enter the points: \n");
+    for (int i = 0; i < v; i++)
+    {
+        scanf("%d", &pointsx[i]);
+        scanf("%d", &pointsy[i]);
+    }
+
+    printf("\n Choose your pick: \n");
+    printf("1. About x-asis\n");
+    printf("2. About y-asis\n");
+    printf("3. About line x = y\n");
+    scanf("%d", &num);
+
+    int gd = DETECT, gm = VGAMAX;
+    initgraph(&gd, &gm, 0);
+
+    int pointsx_t[v], pointsy_t[v];
+
+    for (int i = 0; i < v; i++)
+    {
+        pointsx_t[i] = pointsx[i] + 320 ;
+        pointsy_t[i] = pointsy[i] + 240;
+    }
+
+    draw_poly(pointsx_t, pointsy_t, v);
+    setcolor(GREEN);
+    reflect_poly(pointsx, pointsy, v, num);
 }
 
 void shear()
 {
-  printf("Let's shear? \n");
+    printf("Let's shear? \n");
 
     int v;
     float shx, shy;
