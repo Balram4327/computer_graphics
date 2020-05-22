@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <graphics.h>
 
-// Global Variables
 int xmin, xmax, ymin, ymax;
 
 struct lines
@@ -23,7 +22,7 @@ void clip(struct lines mylines)
 	// arrays will store bits
 	// Here bits impiles initial Point whereas bite implies end points
 	int bits[4], bite[4], i, var;
-	
+
 	setcolor(RED);
 
 	// Finding Bits
@@ -35,25 +34,6 @@ void clip(struct lines mylines)
 	bite[2] = sign(ymin - mylines.y2);
 	bits[3] = sign(mylines.y1 - ymax);
 	bite[3] = sign(mylines.y2 - ymax);
-
-	/*
-	// initial will used for initial coordinates and end for final 
-	string initial = "", end = "", temp = ""; 
-
-	// convert bits to string 
-	for (i = 0; i < 4; i++) { 
-		if (bits[i] == 0) 
-			initial += '0'; 
-		else
-			initial += '1'; 
-	} 
-	for (i = 0; i < 4; i++) { 
-		if (bite[i] == 0) 
-			end += '0'; 
-		else
-			end += '1'; 
-	} 
-	*/
 
 	// finding slope of line y=mx+c as (y-y1)=m(x-x1)+c
 	// where m is slope m=dy/dx;
@@ -165,24 +145,7 @@ void clip(struct lines mylines)
 			bite[2] = sign(ymin - mylines.y2);
 			bits[3] = sign(mylines.y1 - ymax);
 			bite[3] = sign(mylines.y2 - ymax);
-		} // end of for loop
-		// Inialize initial and end to NULL
-		/*
-		initial = "", end = ""; 
-		// Updating strings again by bit 
-		for (i = 0; i < 4; i++) { 
-			if (bits[i] == 0) 
-				initial += '0'; 
-			else
-				initial += '1'; 
-		} 
-		for (i = 0; i < 4; i++) { 
-			if (bite[i] == 0) 
-				end += '0'; 
-			else
-				end += '1'; 
-		} 
-*/
+		}
 		f = 0;
 		for (int i = 0; i < 4; i++)
 			if (bits[i] != 0 || bite[i] != 0)
@@ -200,22 +163,23 @@ void clip(struct lines mylines)
 	}
 }
 
-int main()
+void main()
 {
 
 	// Setting values of Clipping window
-	xmin = 40;
-	xmax = 500;
-	ymin = 40;
-	ymax = 460;
+	printf("Enter xmin and xmax for the clipping window: ");
+	scanf("%d %d", &xmin,&xmax);
+
+	printf("Enter ymin and ymax for the clipping window: ");
+	scanf("%d %d", &ymin,&ymax);
 
 	struct lines myline;
 
-	// Setting the coordinated of the lines
-	myline.x1 = 50;
-	myline.y1 = 30;
-	myline.x2 = 100;
-	myline.y2 = 100;
+	printf("Enter the line \n");
+    printf("First point: \n");
+    scanf("%d %d", &myline.x1,&myline.y1);
+    printf("Second point: \n");
+    scanf("%d %d", &myline.x2,&myline.y2);
 
 	int gd = DETECT, gm;
 	initgraph(&gd, &gm, NULL);
@@ -239,5 +203,4 @@ int main()
 
 	getch();
 	closegraph();
-	return 0;
 }

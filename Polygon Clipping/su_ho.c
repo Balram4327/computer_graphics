@@ -1,8 +1,6 @@
 //Sutherland–Hodgman line clipping
-
 #include <stdio.h>
 #include <graphics.h>
-//using namespace std;
 
 const int MAX_POINTS = 20;
 
@@ -28,9 +26,21 @@ int y_intersect(int x1, int y1, int x2, int y2,
 	return num / den;
 }
 
+void draw_poly(float pointsx[], float pointsy[], int v)
+{
+    for (int i = 0; i < v; i++)
+        if (i == v - 1)
+            line(pointsx[i], 480 - pointsy[i], pointsx[0], 480 - pointsy[0]);
+        else
+            line(pointsx[i], 480 - pointsy[i], pointsx[i + 1], 480 - pointsy[i + 1]);
+
+    getch();
+}
+
+
 // This functions clips all the edges w.r.t one clip
 // edge of clipping area
-int clip(int poly_points[][2], int poly_size,
+int clip(float poly_pointsx[],float poly_pointsy[], int poly_size,
 		 int x1, int y1, int x2, int y2)
 {
 	int new_points[MAX_POINTS][2], new_poly_size = 0;
@@ -41,8 +51,8 @@ int clip(int poly_points[][2], int poly_size,
 	{
 		// i and k form a line in polygon
 		int k = (i + 1) % poly_size;
-		int ix = poly_points[i][0], iy = poly_points[i][1];
-		int kx = poly_points[k][0], ky = poly_points[k][1];
+		int ix = poly_pointsx[i], iy = poly_pointsy[i];
+		int kx = poly_pointsx[k], ky = poly_pointsy[k];
 
 		// Calculating position of first point
 		// w.r.t. clipper line
@@ -100,16 +110,15 @@ int clip(int poly_points[][2], int poly_size,
 	poly_size = new_poly_size;
 	for (int i = 0; i < poly_size; i++)
 	{
-		poly_points[i][0] = new_points[i][0];
-		poly_points[i][1] = new_points[i][1];
+		poly_pointsx[i] = new_points[i][0];
+		poly_pointsy[i] = new_points[i][1];
 	}
 
 	return poly_size;
 }
 
 // Implements Sutherland–Hodgman algorithm
-void suthHodgClip(int poly_points[][2], int poly_size,
-				  int clipper_points[][2], int clipper_size)
+void suthHodgClip(float poly_pointsx[],float poly_pointsy[], int poly_size, float clipper_pointsx[],float clipper_pointsy[], int clipper_size)
 {
 	//i and k are two consecutive indexes
 	for (int i = 0; i < clipper_size; i++)
@@ -118,9 +127,9 @@ void suthHodgClip(int poly_points[][2], int poly_size,
 
 		// We pass the current array of vertices, it's size
 		// and the end points of the selected clipper line
-		poly_size = clip(poly_points, poly_size, clipper_points[i][0],
-						 clipper_points[i][1], clipper_points[k][0],
-						 clipper_points[k][1]);
+		poly_size = clip(poly_pointsx,poly_pointsy, poly_size, clipper_pointsx[i],
+						 clipper_pointsy[i], clipper_pointsx[k],
+						 clipper_pointsy[k]);
 	}
 
 	// Printing vertices of clipped polygon
@@ -128,45 +137,54 @@ void suthHodgClip(int poly_points[][2], int poly_size,
 	{
 		//	cout << '(' << poly_points[i][0] << ", " << poly_points[i][1] << ") ";
 		if (i == 0)
-			line(poly_points[poly_size - 1][0],480 - poly_points[poly_size - 1][1], poly_points[i][0], 480 - poly_points[i][1]);
+			line(poly_pointsx[poly_size - 1],480 - poly_pointsy[poly_size - 1], poly_pointsx[i], 480 - poly_pointsy[i]);
 
 		else
-			line(poly_points[i - 1][0], 480 - poly_points[i - 1][1], poly_points[i][0], 480 - poly_points[i][1]);
+			line(poly_pointsx[i - 1], 480 - poly_pointsy[i - 1], poly_pointsx[i], 480 - poly_pointsy[i]);
 	}
 }
 
 //Driver code
-int main()
+void main()
 {
 	// Defining polygon vertices in clockwise order
-	int poly_size = 6;
-	int poly_points[][2] = {{50, 100}, {50, 300}, {300, 400}, {400, 300}, {200, 200}, {400, 100}};
+	int poly_size;
+	//int poly_points[][2] = {{50, 100}, {50, 300}, {300, 400}, {400, 300}, {200, 200}, {400, 100}};
 
-	// Defining clipper polygon vertices in clockwise order
-	// 1st Example with square clipper
-	int clipper_size = 4;
-	int clipper_points[][2] = {{250, 50}, {250, 450}, {500, 450}, {500, 50}};
+	printf("Number of points: (in the subject polygon) ");
+	scanf("%d",&poly_size);
+	float poly_pointsx[poly_size];
+	float poly_pointsy[poly_size];
 
+	printf("Enter the polygon: \n");
+	for(int i =0; i<poly_size;i++)
+		scanf("%f %f",&poly_pointsx,&poly_pointsy);
+	
+	int clipper_size;
+	printf("Number of points: (in the clipping polygon) ");
+	scanf("%d",&clipper_size);
+	//int clipper_points[][2] = {{250, 50}, {250, 450}, {500, 450}, {500, 50}};
+	float clipper_pointsx[clipper_size];
+	float clipper_pointsy[clipper_size];
+
+	printf("Enter the clipping polygon: \n");
+	for(int i =0; i<clipper_size;i++)
+		scanf("%f %f",&clipper_pointsx,&clipper_pointsy);
+	
 	int gd = DETECT, gm = VGAMAX;
 	initgraph(&gd, &gm, 0);
 
-	rectangle(250,480 - 50, 500,480 - 450);
+	draw_poly( clipper_pointsx,clipper_pointsy,clipper_size);//clipper
+	
 	setcolor(RED);
 
-	line(50, 480 - 100, 50, 480 - 300);
-	line(50, 480 - 300, 300, 480 - 400);
-	line(300, 480 - 400, 400, 480 - 300);
-	line(400, 480 - 300, 200, 480 - 200);
-	line(200, 480 - 200, 400, 480 - 100);
-	line(400, 480 - 100, 50, 480 - 100);
+	draw_poly(poly_pointsx,poly_pointsy,poly_size);//polygon
 
 	setcolor(GREEN);
 	
-	suthHodgClip(poly_points, poly_size, clipper_points,
-				 clipper_size);
+	suthHodgClip(poly_pointsx, poly_pointsy, poly_size, clipper_pointsx,clipper_pointsy,clipper_size);
 
 	getch();
 
 	closegraph();
-	return 0;
 }
