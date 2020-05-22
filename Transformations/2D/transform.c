@@ -17,7 +17,7 @@ void shear_poly(float[], float[], int, float, float);
 void reflect_poly(float[], float[], int, int);
 void rotate_poly(float[], float[], int, float, int);
 void draw_poly(float[], float[], int);
-float mat_mul(float[], float[], float[], int, int, int);
+float mat_mul(float[], float[], float[], float, float, int);
 
 void main()
 {
@@ -53,7 +53,7 @@ void main()
     closegraph;
 }
 
-float mat_mul(float mat1[], float mat2[], float mat3[], int x, int y, int num)
+float mat_mul(float mat1[], float mat2[], float mat3[], float x, float y, int num)
 {
     float value;
     if (num == 0)
@@ -184,7 +184,7 @@ void rotate_poly(float pointsx[], float pointsy[], int v, float theta, int num)
     float mat1[3] = {0, 0, 0};
     float mat2[3] = {0, 0, 0};
     float mat3[3] = {0, 0, 1};
-    int temp[2];
+    float temp[2];
     temp[0] = pointsx[0];
     temp[1] = pointsy[0];
 
@@ -199,11 +199,11 @@ void rotate_poly(float pointsx[], float pointsy[], int v, float theta, int num)
 
     else
     {
-        mat1[0] = cos(theta);
-        mat1[1] = sin(theta);
+        mat1[0] = COS(theta);
+        mat1[1] = SIN(theta);
 
-        mat2[0] = -1 * sin(theta);
-        mat2[1] = cos(theta);
+        mat2[0] = -1 * SIN(theta);
+        mat2[1] = COS(theta);
     }
 
     for (int i = 0; i < v; i++)
@@ -212,19 +212,26 @@ void rotate_poly(float pointsx[], float pointsy[], int v, float theta, int num)
         pointsy[i] = pointsy[i] - temp[1];
     }
 
+    //draw_poly(pointsx,pointsy,v);
+
     for (int i = 0; i < v; i++)
     {
         pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
         pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
     }
 
+    //draw_poly(pointsx,pointsy,v);
+
     for (int i = 0; i < v; i++)
     {
         pointsx[i] = pointsx[i] + temp[0];
         pointsy[i] = pointsy[i] + temp[1];
+    //    printf("temp0 = %f temp1= %f\n",temp[0],temp[1]);
     }
 
     draw_poly(pointsx, pointsy, v);
+
+    getch();
 }
 
 void translate()
