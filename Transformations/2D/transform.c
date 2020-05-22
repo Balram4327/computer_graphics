@@ -96,10 +96,20 @@ void scale_poly(float pointsx[], float pointsy[], int v, int sx, int sy)
     float mat2[3] = {0, sy, 0};
     float mat3[3] = {1, 0, 1};
 
+    float temp[2];
+    temp[0] = pointsx[0];
+    temp[1] = pointsy[0];
+    
     for (int i = 0; i < v; i++)
     {
         pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
         pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
+    }
+
+    for (int i = v-1; i >= 0; i--)
+    {
+        pointsx[i] = pointsx[i] - pointsx[0] + temp[0];
+        pointsy[i] = pointsy[i] - pointsy[0] + temp[1];
     }
 
     draw_poly(pointsx, pointsy, v);
@@ -110,7 +120,8 @@ void shear_poly(float pointsx[], float pointsy[], int v, float shx, float shy)
     float mat1[3] = {1, shy, 0};
     float mat2[3] = {shx, 1, 0};
     float mat3[3] = {0, 0, 1};
-    int temp[2];
+
+    float temp[2];
     temp[0] = pointsx[0];
     temp[1] = pointsy[0];
 
@@ -120,7 +131,7 @@ void shear_poly(float pointsx[], float pointsy[], int v, float shx, float shy)
         pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
     }
 
-    for (int i = 0; i < v; i++)
+    for (int i = v; i >= 0; i--)
     {
         pointsx[i] = pointsx[i] - pointsx[0] + temp[0];
         pointsy[i] = pointsy[i] - pointsy[0] + temp[1];
