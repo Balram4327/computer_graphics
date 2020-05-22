@@ -1,8 +1,6 @@
 //Bresenham Circle Drawing Algorithm
-
 # include<stdio.h>
 # include<graphics.h>
-# include<math.h>
 
 void main()
     {
