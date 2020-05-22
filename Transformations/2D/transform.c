@@ -2,9 +2,6 @@
 #include <graphics.h>
 #include <math.h>
 
-#define SIN(x) sin(x * 3.141592653589/180) 
-#define COS(x) cos(x * 3.141592653589/180)   
-
 //Prototypes
 void translate();
 void scale();
@@ -99,14 +96,14 @@ void scale_poly(float pointsx[], float pointsy[], int v, int sx, int sy)
     float temp[2];
     temp[0] = pointsx[0];
     temp[1] = pointsy[0];
-    
+
     for (int i = 0; i < v; i++)
     {
         pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
         pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
     }
 
-    for (int i = v-1; i >= 0; i--)
+    for (int i = v - 1; i >= 0; i--)
     {
         pointsx[i] = pointsx[i] - pointsx[0] + temp[0];
         pointsy[i] = pointsy[i] - pointsy[0] + temp[1];
@@ -145,6 +142,7 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
     float mat1[3] = {0, 0, 0};
     float mat2[3] = {0, 0, 0};
     float mat3[3] = {0, 0, 0};
+    int x_pivot,y_pivot;
     if (num == 1)
     {
         mat1[0] = 1;
@@ -157,11 +155,23 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
         mat2[1] = 1;
         mat3[2] = 1;
     }
-    else
+    
+    else if (num == 3)
     {
         mat1[1] = 1;
         mat2[0] = 1;
         mat3[2] = 1;
+
+         x_pivot = pointsx[0];
+         y_pivot = pointsy[0];
+
+        for (int i = 0; i < v; i++)
+        {
+            int x_shifted = pointsx[i] - x_pivot;
+            int y_shifted = pointsy[i] - y_pivot;
+            pointsx[i] = x_pivot + (x_shifted * cos(-45*3.14/180) - y_shifted * sin(-45*3.14/180));
+            pointsy[i] = y_pivot + (x_shifted * sin(-45*3.14/180) + y_shifted * cos(-45*3.14/180));
+        }
     }
 
     for (int i = 0; i < v; i++)
@@ -170,7 +180,18 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
         pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
     }
 
-    for (int i = 0; i < v; i++)
+     if(num == 3)
+    {
+            for (int i = 0; i < v; i++)
+        {
+            int x_shifted = pointsx[i] - x_pivot;
+            int y_shifted = pointsy[i] - y_pivot;
+            pointsx[i] = x_pivot + (x_shifted * cos(45*3.14/180) - y_shifted * sin(45*3.14/180));
+            pointsy[i] = y_pivot + (x_shifted * sin(45*3.14/180) + y_shifted * cos(45*3.14/180));
+        }
+    }
+
+       for (int i = 0; i < v; i++)
     {
         pointsx[i] = pointsx[i] + 320;
         pointsy[i] = pointsy[i] + 240;
@@ -190,43 +211,29 @@ void rotate_poly(float pointsx[], float pointsy[], int v, float theta, int num)
 
     if (num == 1)
     {
-        mat1[0] = COS(theta);
-        mat1[1] = -1 * SIN(theta);
+        mat1[0] = cos(theta * 3.141592653589 / 180);
+        mat1[1] = -1 * sin(theta * 3.141592653589 / 180);
 
-        mat2[0] = SIN(theta);
-        mat2[1] = COS(theta);
+        mat2[0] = sin(theta * 3.141592653589 / 180);
+        mat2[1] = cos(theta * 3.141592653589 / 180);
     }
 
     else
     {
-        mat1[0] = COS(theta);
-        mat1[1] = SIN(theta);
+        mat1[0] = cos(theta * 3.141592653589 / 180);
+        mat1[1] = sin(theta * 3.141592653589 / 180);
 
-        mat2[0] = -1 * SIN(theta);
-        mat2[1] = COS(theta);
+        mat2[0] = -1 * sin(theta * 3.141592653589 / 180);
+        mat2[1] = cos(theta * 3.141592653589 / 180);
     }
 
     for (int i = 0; i < v; i++)
     {
-        pointsx[i] = pointsx[i] - temp[0];
-        pointsy[i] = pointsy[i] - temp[1];
-    }
+        int x = pointsx[i] - temp[0];
+        int y = pointsy[i] - temp[1];
 
-    //draw_poly(pointsx,pointsy,v);
-
-    for (int i = 0; i < v; i++)
-    {
-        pointsx[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 0);
-        pointsy[i] = mat_mul(mat1, mat2, mat3, pointsx[i], pointsy[i], 1);
-    }
-
-    //draw_poly(pointsx,pointsy,v);
-
-    for (int i = 0; i < v; i++)
-    {
-        pointsx[i] = pointsx[i] + temp[0];
-        pointsy[i] = pointsy[i] + temp[1];
-    //    printf("temp0 = %f temp1= %f\n",temp[0],temp[1]);
+        pointsx[i] = temp[0] + mat_mul(mat1, mat2, mat3, x, y, 0);
+        pointsy[i] = temp[1] + mat_mul(mat1, mat2, mat3, x, y, 1);
     }
 
     draw_poly(pointsx, pointsy, v);
