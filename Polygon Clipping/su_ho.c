@@ -28,19 +28,18 @@ int y_intersect(int x1, int y1, int x2, int y2,
 
 void draw_poly(float pointsx[], float pointsy[], int v)
 {
-    for (int i = 0; i < v; i++)
-        if (i == v - 1)
-            line(pointsx[i], 480 - pointsy[i], pointsx[0], 480 - pointsy[0]);
-        else
-            line(pointsx[i], 480 - pointsy[i], pointsx[i + 1], 480 - pointsy[i + 1]);
+	for (int i = 0; i < v; i++)
+		if (i == v - 1)
+			line(pointsx[i], 480 - pointsy[i], pointsx[0], 480 - pointsy[0]);
+		else
+			line(pointsx[i], 480 - pointsy[i], pointsx[i + 1], 480 - pointsy[i + 1]);
 
-    getch();
+	getch();
 }
-
 
 // This functions clips all the edges w.r.t one clip
 // edge of clipping area
-int clip(float poly_pointsx[],float poly_pointsy[], int poly_size,
+int clip(float poly_pointsx[], float poly_pointsy[], int poly_size,
 		 int x1, int y1, int x2, int y2)
 {
 	int new_points[MAX_POINTS][2], new_poly_size = 0;
@@ -118,7 +117,7 @@ int clip(float poly_pointsx[],float poly_pointsy[], int poly_size,
 }
 
 // Implements Sutherland–Hodgman algorithm
-void suthHodgClip(float poly_pointsx[],float poly_pointsy[], int poly_size, float clipper_pointsx[],float clipper_pointsy[], int clipper_size)
+void suthHodgClip(float poly_pointsx[], float poly_pointsy[], int poly_size, float clipper_pointsx[], float clipper_pointsy[], int clipper_size)
 {
 	//i and k are two consecutive indexes
 	for (int i = 0; i < clipper_size; i++)
@@ -127,7 +126,7 @@ void suthHodgClip(float poly_pointsx[],float poly_pointsy[], int poly_size, floa
 
 		// We pass the current array of vertices, it's size
 		// and the end points of the selected clipper line
-		poly_size = clip(poly_pointsx,poly_pointsy, poly_size, clipper_pointsx[i],
+		poly_size = clip(poly_pointsx, poly_pointsy, poly_size, clipper_pointsx[i],
 						 clipper_pointsy[i], clipper_pointsx[k],
 						 clipper_pointsy[k]);
 	}
@@ -137,7 +136,7 @@ void suthHodgClip(float poly_pointsx[],float poly_pointsy[], int poly_size, floa
 	{
 		//	cout << '(' << poly_points[i][0] << ", " << poly_points[i][1] << ") ";
 		if (i == 0)
-			line(poly_pointsx[poly_size - 1],480 - poly_pointsy[poly_size - 1], poly_pointsx[i], 480 - poly_pointsy[i]);
+			line(poly_pointsx[poly_size - 1], 480 - poly_pointsy[poly_size - 1], poly_pointsx[i], 480 - poly_pointsy[i]);
 
 		else
 			line(poly_pointsx[i - 1], 480 - poly_pointsy[i - 1], poly_pointsx[i], 480 - poly_pointsy[i]);
@@ -152,37 +151,38 @@ void main()
 	//int poly_points[][2] = {{50, 100}, {50, 300}, {300, 400}, {400, 300}, {200, 200}, {400, 100}};
 
 	printf("Number of points: (in the subject polygon) ");
-	scanf("%d",&poly_size);
+	scanf("%d", &poly_size);
 	float poly_pointsx[poly_size];
 	float poly_pointsy[poly_size];
 
 	printf("Enter the polygon: \n");
-	for(int i =0; i<poly_size;i++)
-		scanf("%f %f",&poly_pointsx,&poly_pointsy);
-	
+	for (int i = 0; i < poly_size; i++)
+		scanf("%f %f", &poly_pointsx[i], &poly_pointsy[i]);
+
 	int clipper_size;
 	printf("Number of points: (in the clipping polygon) ");
-	scanf("%d",&clipper_size);
+	scanf("%d", &clipper_size);
 	//int clipper_points[][2] = {{250, 50}, {250, 450}, {500, 450}, {500, 50}};
 	float clipper_pointsx[clipper_size];
 	float clipper_pointsy[clipper_size];
 
 	printf("Enter the clipping polygon: \n");
-	for(int i =0; i<clipper_size;i++)
-		scanf("%f %f",&clipper_pointsx,&clipper_pointsy);
+	for (int i = 0; i < clipper_size; i++)
+		scanf("%f %f", &clipper_pointsx[i], &clipper_pointsy[i]);
 	
+
 	int gd = DETECT, gm = VGAMAX;
 	initgraph(&gd, &gm, 0);
 
-	draw_poly( clipper_pointsx,clipper_pointsy,clipper_size);//clipper
-	
+	draw_poly(clipper_pointsx, clipper_pointsy, clipper_size); //clipper
+
 	setcolor(RED);
 
-	draw_poly(poly_pointsx,poly_pointsy,poly_size);//polygon
+	draw_poly(poly_pointsx, poly_pointsy, poly_size); //polygon
 
 	setcolor(GREEN);
-	
-	suthHodgClip(poly_pointsx, poly_pointsy, poly_size, clipper_pointsx,clipper_pointsy,clipper_size);
+
+	suthHodgClip(poly_pointsx, poly_pointsy, poly_size, clipper_pointsx, clipper_pointsy, clipper_size);
 
 	getch();
 
