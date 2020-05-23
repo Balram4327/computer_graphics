@@ -142,7 +142,7 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
     float mat1[3] = {0, 0, 0};
     float mat2[3] = {0, 0, 0};
     float mat3[3] = {0, 0, 0};
-    int x_pivot,y_pivot;
+    
     if (num == 1)
     {
         mat1[0] = 1;
@@ -158,12 +158,13 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
     
     else if (num == 3)
     {
-        mat1[1] = 1;
-        mat2[0] = 1;
+      mat1[0] = 1;
+        mat2[1] = -1;
         mat3[2] = 1;
 
-         x_pivot = pointsx[0];
-         y_pivot = pointsy[0];
+        int x_pivot,y_pivot;
+         x_pivot = 0;
+         y_pivot = 0;
 
         for (int i = 0; i < v; i++)
         {
@@ -182,6 +183,9 @@ void reflect_poly(float pointsx[], float pointsy[], int v, int num)
 
      if(num == 3)
     {
+        int x_pivot,y_pivot;
+         x_pivot = 0;
+         y_pivot = 0;
             for (int i = 0; i < v; i++)
         {
             int x_shifted = pointsx[i] - x_pivot;
