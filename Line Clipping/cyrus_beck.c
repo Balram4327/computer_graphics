@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <graphics.h>
 
-float tl_max = -1, tu_min = 2;
+float tl_max = 0, tu_min = 1;
 
 int sign(int f, int i)
 {
@@ -113,12 +113,14 @@ void main()
     setcolor(RED);
 
     cyrus(verticesx, verticesy, n, myline);
+
     float clipped_line[4];
     clipped_line[0] = myline[0] + (myline[2] - myline[0]) * tl_max;
     clipped_line[1] = myline[1] + (myline[3] - myline[1]) * tl_max;
     clipped_line[2] = myline[0] + (myline[2] - myline[0]) * tu_min;
     clipped_line[3] = myline[1] + (myline[3] - myline[1]) * tu_min;
 
+    if((clipped_line[0]!=myline[0]) || (clipped_line[1]!=myline[1]) || (clipped_line[1]!=myline[1]) || (clipped_line[3]!=myline[3]) )
     line(clipped_line[0], 480 - clipped_line[1], clipped_line[2], 480 - clipped_line[3]);
 
     getch();
